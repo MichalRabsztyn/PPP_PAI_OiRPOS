@@ -1,8 +1,18 @@
 # PPP_PAI_OiRPOS
 
-# To jest projekt.
+# Co to jest?
+Projekt aplikacji internetowej działającej na aplikacji na ASP.Net łączącej się z serwerem aplikacji Flask, która umożliwia uruchomienie wykrywania obiektów na obrazach.
 
-# Działa na komputerze.
+# Jak działa?
+Frontend - Bootstrap
+Aplikacja - C# ASP.Net
+Skrypty - Python
+Baza danych -
+Serwer Flask
+Serwer ASP.NET
 
-# Cza włączyć.
+# Jak użyć?
 
+# Wymagania programowe
+Ultralytics - pip install ultralytics
+Flask - pip install flask
