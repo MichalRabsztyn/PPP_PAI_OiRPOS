@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PPP_PAI_OiRPOS", "PPP_PAI_OiRPOS.csproj", "{CA82968D-1E9D-40CB-85C6-EBFEC809454C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA82968D-1E9D-40CB-85C6-EBFEC809454C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA82968D-1E9D-40CB-85C6-EBFEC809454C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA82968D-1E9D-40CB-85C6-EBFEC809454C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA82968D-1E9D-40CB-85C6-EBFEC809454C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9AC9653E-4A95-480E-8A79-9879C8131DAE}
+	EndGlobalSection
+EndGlobal

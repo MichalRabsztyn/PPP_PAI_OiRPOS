@@ -1,0 +1,40 @@
+﻿@page
+@model DetectionModel
+@{
+	ViewData["Title"] = "Detection";
+}
+
+<form method="post" enctype="multipart/form-data">
+    <fieldset>
+        <legend>Detect from image file:</legend>
+        <div class="mb-3">
+            <label for="modelForm" class="form-label">Model</label>
+            <select asp-for="Model" class="form-select" id="modelForm">
+                <option value="anime_face.pt">Anime Face</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="fileForm" class="form-label">File</label>
+            <input type="file" asp-for="File" class="form-control" accept="image/jpeg,image/png" id="fileForm">
+        </div>
+        <input class="btn btn-primary" type="submit" value="Submit">
+    </fieldset>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.Image))
+{
+    <div class="card m-auto" style="width: 18rem;">
+        <img src="@Model.Image" class="card-img-top" alt="Result">
+        <div class="card-body">
+            <p class="card-text text-center">Result</p>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div>
+		<p>Error: <span class="text-warning">@Model.ErrorMessage</span></p>
+    </div>
+}
+
