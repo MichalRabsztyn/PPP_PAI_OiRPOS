@@ -1,0 +1,49 @@
+﻿@page
+@model PPP_PAI_OiRPOS.Pages.DetectionMultipleOutlineModel
+@{
+	ViewData["Title"] = "Detection multiple Outliners";
+}
+
+<form method="post" enctype="multipart/form-data">
+    <fieldset>
+        <legend>Detect from images files faces score them by features and select outliners by histogram score:</legend>
+        <div class="mb-3">
+            <label for="modelForm" class="form-label">Model</label>
+            <select asp-for="Model" class="form-select" id="modelForm">
+                <option value="anime_face.pt">Anime Face</option>
+                <option value="anime_face_small.pt">Anime Face Fast</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="fileForm" class="form-label">File</label>
+            <input type="file" asp-for="Files" class="form-control" accept="image/jpeg,image/png" id="fileForm" multiple>
+        </div>
+        <div class="mb-3">
+            <label for="ThresholdForm" class="form-label">Threshold</label>
+            <input type="number" asp-for="Threshold" class="form-control" id="ThresholdForm" min="0" max="1" step="0.01">
+        </div>
+        <input class="btn btn-primary" type="submit" value="Submit">
+    </fieldset>
+</form>
+
+@if (Model.Images != null)
+{
+    <div class="d-flex flex-wrap m-1 gap-1">
+        @foreach (var image in Model.Images)
+        {
+            <div class="card m-auto" style="width: 18rem;">
+                <img src="@image.Item1" class="card-img-top" alt="Result">
+                <div class="card-body">
+                    <p class="card-text text-center">@image.Item2</p>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div>
+        <p>Error: <span class="text-warning">@Model.ErrorMessage</span></p>
+    </div>
+}

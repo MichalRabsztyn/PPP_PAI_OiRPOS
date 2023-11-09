@@ -23,12 +23,13 @@
         <input type="file" name="files" id="" multiple>
         <input type="submit" value="submit">
     </form>
-    <form method="post" action="/detectMulti" enctype="multipart/form-data">
+    <form method="post" action="/detectFaceOutliners" enctype="multipart/form-data">
         <select name="model" id="">
             <option value="anime_face.pt">Anime Face</option>
             <option value="anime_face_small.pt">Anime Face Fast</option>
         </select>
         <input type="file" name="files" id="" multiple>
+        <input type="number" name="threshold" id="" min="0.0" max="1.0" step="0.01" value="0.7">
         <input type="submit" value="submit">
     </form>
     <!-- {%if userdata and userdata%}

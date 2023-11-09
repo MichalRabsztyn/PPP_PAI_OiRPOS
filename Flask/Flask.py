@@ -7,8 +7,33 @@ import subprocess, os, shutil, config
 app = Flask("AppServices")
 
 def cleanup_files():
-	if os.path.exists(config.RESULT_FOLDER_PATH):
-		shutil.rmtree(config.RESULT_FOLDER_PATH)
+    if os.path.exists(config.RESULT_FOLDER_PATH):
+        shutil.rmtree(config.RESULT_FOLDER_PATH)
+
+    # Clear contents of PATH_TO_SAVE_CROPPED_IMAGES except csv folder and .gitkeep file
+    save_cropped_images_path = config.PATH_TO_SAVE_CROPPED_IMAGES
+    for item in os.listdir(save_cropped_images_path):
+        item_path = os.path.join(save_cropped_images_path, item)
+        if os.path.isfile(item_path) and item != '.gitkeep':
+            os.remove(item_path)
+        elif os.path.isdir(item_path) and item != 'csv':
+            shutil.rmtree(item_path)
+
+    # Clear contents of PATH_TO_CSV_FILES
+    csv_files_path = config.PATH_TO_CSV_FILES
+    for csv_file in os.listdir(csv_files_path):
+        csv_file_path = os.path.join(csv_files_path, csv_file)
+        if os.path.isfile(csv_file_path):
+            os.remove(csv_file_path)
+
+    # Clear contents of PATH_TO_RESULTS
+    results_path = config.PATH_TO_RESULTS
+    for result_item in os.listdir(results_path):
+        result_item_path = os.path.join(results_path, result_item)
+        if os.path.isfile(result_item_path):
+            os.remove(result_item_path)
+        elif os.path.isdir(result_item_path):
+            shutil.rmtree(result_item_path)
 
 @app.route("/")
 def index():
@@ -73,6 +98,43 @@ def detectMulti():
     
     return jsonify({"error": "No file uploaded"}) 
 
+@app.route("/detectFaceOutliners", methods=['POST'])
+def detectFaceOutliners():
+    cleanup_files()
+    model = request.form['model']
+    threshold = request.form['threshold']
+    # print(threshold)
+    uploaded_files = request.files.getlist('files')
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            if uploaded_file.filename:
+                file_path = os.path.join(config.UPLOADED_FILES_PATH, uploaded_file.filename)
+                uploaded_file.save(file_path)
+        
+        subprocess.run([config.PYTHON, config.PATH_CROP_SCRIPT, config.PATH_USABLE_MODELS+model])
+        subprocess.run([config.PYTHON, config.PATH_FEATURE_SCRIPT])
+        subprocess.run([config.PYTHON, config.PATH_OUTLINE_SCRIPT, config.PATH_TO_RESULTS, threshold])
+
+        #clear upload
+        for uploaded_file in uploaded_files:
+            if uploaded_file.filename:
+                file_path = os.path.join(config.UPLOADED_FILES_PATH, uploaded_file.filename)
+                os.remove(file_path)
+        
+        target = config.PATH_TO_RESULTS
+        stream = BytesIO()
+        with ZipFile(stream, 'w') as zf:
+            for file in glob(os.path.join(target, '*.png')):
+                zf.write(file, os.path.basename(file))
+        stream.seek(0)
+
+        return send_file(
+            stream,
+            as_attachment=True,
+            download_name='archive.zip'
+        )
+    
+    return jsonify({"error": "No file uploaded"})
 
 app.config.from_object(__name__)
 app.run(debug = True, port = 8000)

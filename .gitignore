@@ -21,6 +21,7 @@ YOLO/*.yaml
 YOLO/yolo*.pt
 YOLO/usable_models/*
 !YOLO/usable_models/.gitkeep
+!YOLO/usable_models/anime_face_small.pt
 
 
 LICENSE
