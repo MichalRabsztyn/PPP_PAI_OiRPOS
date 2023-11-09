@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strona glowna</title>
 </head>
-<body>
+<body style="background-color: gray;">
     <h1>DETECT IMAGE</h1>
     <form method="post" action="/detect" enctype="multipart/form-data">
         <select name="model" id="">
             <option value="anime_face.pt">Anime Face</option>
+            <option value="anime_face_small.pt">Anime Face Fast</option>
         </select>
         <input type="file" name="file" id="">
         <input type="submit" value="submit">
@@ -17,6 +18,15 @@
     <form method="post" action="/detectMulti" enctype="multipart/form-data">
         <select name="model" id="">
             <option value="anime_face.pt">Anime Face</option>
+            <option value="anime_face_small.pt">Anime Face Fast</option>
+        </select>
+        <input type="file" name="files" id="" multiple>
+        <input type="submit" value="submit">
+    </form>
+    <form method="post" action="/detectMulti" enctype="multipart/form-data">
+        <select name="model" id="">
+            <option value="anime_face.pt">Anime Face</option>
+            <option value="anime_face_small.pt">Anime Face Fast</option>
         </select>
         <input type="file" name="files" id="" multiple>
         <input type="submit" value="submit">
