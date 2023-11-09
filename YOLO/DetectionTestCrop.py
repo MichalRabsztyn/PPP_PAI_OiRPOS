@@ -1,8 +1,6 @@
 from ultralytics import YOLO
 from PIL import Image
-import os, sys
-
-PATH_TO_SAVE_CROPPED_IMAGES="cropped/"
+import os, sys, config
 
 if len(sys.argv) < 3:
     print("Usage: python your_script.py path_to_model path_to_item")
@@ -21,7 +19,7 @@ for pred in results:
     for box in pred.boxes.xyxy:
         x_min, y_min, x_max, y_max = box.tolist()
         cropped_image = input_image.crop((x_min, y_min, x_max, y_max))
-        cropped_image.save(f"{PATH_TO_SAVE_CROPPED_IMAGES}{os.path.basename(pred.path)}_{i}.jpg")
+        cropped_image.save(f"{config.PATH_TO_SAVE_CROPPED_IMAGES}{os.path.basename(pred.path)}_{i}.jpg")
         i+=1
 
 # for pred in results:
