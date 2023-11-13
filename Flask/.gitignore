@@ -1,10 +1,15 @@
 ## CUSTOM
 
-runs/detect/*
-!runs/detect/.gitkeep
-!cropped/.gitkeep
+cropped/*
 cropped/csv/*
+results/*
+uploads/*
+runs/detect/predict/*
+!cropped/.gitkeep
 !cropped/csv/.gitkeep
+!results/.gitkeep
+!uploads/.gitkeep
+!runs/detect/predict/.gitkeep
 
 ## END CUSTOM
 
