@@ -101,9 +101,13 @@ for j, sample in enumerate(samples):
         hbos[j] += log(1.0 / get_bar_height(histograms[i], p)).real
 
 # Find outlier samples based on the score threshold
-threshold = np.percentile(hbos, score_threshold * 100)
+# threshold = np.percentile(hbos, score_threshold * 100)
+# for i, score in enumerate(hbos):
+#     if score > threshold:
+#         outlier_indexes.append(i)
+# changed to score based selecting threshold
 for i, score in enumerate(hbos):
-    if score > threshold:
+    if score/max(hbos) > score_threshold:
         outlier_indexes.append(i)
 
 # Copy the outlier images to the result folder
@@ -126,4 +130,4 @@ for index in outlier_indexes:
 
 with open(folder_name+'/results.txt', 'a+') as file:
     for index in outlier_indexes:
-        file.write(str(hbos[index]/max(hbos)) + '\n')
+        file.write(str(hbos[index]/max(hbos)) + " " + filenamesForSamples[index][0] + '\n')

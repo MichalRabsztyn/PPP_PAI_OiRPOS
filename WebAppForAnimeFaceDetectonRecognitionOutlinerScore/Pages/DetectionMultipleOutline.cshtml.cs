@@ -78,15 +78,44 @@ namespace PPP_PAI_OiRPOS.Pages
                         {
                             foreach (ZipArchiveEntry entry in archive.Entries)
                             {
-                                // Extract each entry (file) to a specific directory or do other processing as needed
-                                using (Stream entryStream = entry.Open())
+                                if (entry.FullName.Contains(".png"))
                                 {
-                                    using (MemoryStream memoryStream = new MemoryStream())
+                                    // Extract each entry (file) to a specific directory or do other processing as needed
+                                    using (Stream entryStream = entry.Open())
                                     {
-                                        entryStream.CopyTo(memoryStream);
-                                        byte[] bytes = memoryStream.ToArray();
-                                        string base64String = Convert.ToBase64String(bytes);
-                                        Images.Add(($"data:image/jpeg;base64,{base64String}", entry.FullName));
+                                        using (MemoryStream memoryStream = new MemoryStream())
+                                        {
+                                            entryStream.CopyTo(memoryStream);
+                                            byte[] bytes = memoryStream.ToArray();
+                                            string base64String = Convert.ToBase64String(bytes);
+                                            Images.Add(($"data:image/jpeg;base64,{base64String}", entry.FullName));
+                                        }
+                                    }
+                                }
+                            }
+                            foreach (ZipArchiveEntry entry in archive.Entries)
+                            {
+                                if (entry.FullName.Contains(".txt"))
+                                {
+                                    using (StreamReader reader = new StreamReader(entry.Open()))
+                                    {
+                                        while (!reader.EndOfStream)
+                                        {
+                                            string line = reader.ReadLine();
+                                            if (line == null) continue;
+
+                                            // Assuming the score is separated by a space, adjust accordingly
+                                            string[] parts = line.Split(' ');
+
+                                            // Assuming the format of Images is (image, fileName)
+                                            var imageEntry = Images.FirstOrDefault(img => img.Item2 == parts[1]);
+
+                                            if (imageEntry != default)
+                                            {
+                                                // Add "score: " + the first part of the line to the existing tuple
+                                                Images[Images.IndexOf(imageEntry)] = (imageEntry.Item1, imageEntry.Item2 + $" score: {parts[0]}");
+                                            }
+                                        }
                                     }
                                 }
                             }

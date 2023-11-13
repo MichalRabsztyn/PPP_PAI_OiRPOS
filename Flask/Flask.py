@@ -146,6 +146,8 @@ def detectFaceOutliners():
         with ZipFile(stream, 'w') as zf:
             for file in glob(os.path.join(target, '*.png')):
                 zf.write(file, os.path.basename(file))
+            for file in glob(os.path.join(target, '*.txt')):
+                zf.write(file, os.path.basename(file))
         stream.seek(0)
 
         return send_file(

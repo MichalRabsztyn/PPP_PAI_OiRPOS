@@ -32,7 +32,7 @@ for file_path in file_list:
         # print("Shape of VGG16 features:", vgg16_feature.shape)
 
         # Write header to the CSV file
-        csv_path = os.path.join(csv_file_path,os.path.basename(img_path)+".csv")
+        csv_path = os.path.join(csv_file_path, os.path.basename(img_path)+".csv")
         with open(csv_path, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             # Write each feature in a new row
