@@ -58,6 +58,7 @@ namespace PPP_PAI_OiRPOS.Pages
 
                 _logger.LogInformation("Sending Post Async to Flask");
                 var response = await client.PostAsync("/detectMulti", form);
+                _logger.LogInformation("Revcivig result form Async to Flask");
 
                 if (!response.IsSuccessStatusCode)
                 {

@@ -50,6 +50,7 @@ namespace PPP_PAI_OiRPOS.Pages
                     // Send the POST request
                     _logger.LogInformation("Sending Post Async to Flask");
                     var response = await client.PostAsync("/detect", form);
+                    _logger.LogInformation("Revcivig result form Async to Flask");
 
                     if (response.IsSuccessStatusCode)
                     {

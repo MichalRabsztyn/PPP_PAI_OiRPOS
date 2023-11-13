@@ -4,6 +4,7 @@ Flask/runs/detect/*
 !Flask/runs/detect/.gitkeep
 Flask/cropped/*
 !Flask/cropped/.gitkeep
+!Flask/cropped/csv/.gitkeep
 
 ## END CUSTOM
 
