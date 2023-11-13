@@ -1,3 +1,5 @@
+print("Running DetectionTestCrop")
+
 from ultralytics import YOLO
 from PIL import Image
 import os, sys, config
@@ -5,13 +7,13 @@ import os, sys, config
 if len(sys.argv) < 2:
     print("Usage: python your_script.py path_to_model")
 else:
-    argument1 = sys.argv[1]
-    print(f"The argument1 you provided is: {argument1}")
-    argument2 = config.UPLOADED_FILES_PATH
-    # argument2 = sys.argv[2]
-    # print(f"The argument2 you provided is: {argument2}")
+    model = sys.argv[1]
 
-model = YOLO(argument1)
+print(f"The argument1 you provided is: {model}")
+argument2 = config.UPLOADED_FILES_PATH
+print(f"The argument2 you provided is: {argument2}")
+
+model = YOLO(model)
 results = model(argument2, imgsz=640, save=False)
 
 for pred in results:

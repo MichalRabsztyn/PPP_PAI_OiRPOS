@@ -1,3 +1,5 @@
+print("Running DetectionTestOutliners")
+
 import sys,os,csv,shutil, config
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,19 +16,20 @@ folder_path = config.PATH_TO_SAVE_CROPPED_IMAGES_DOT
 print("Folder path:", folder_path)
 
 # Get the result folder name (optional, default is "results")
-folder_name = "results"  # Specify the folder name you want to create
+# folder_name = "results"  # Specify the folder name you want to create
 if len(sys.argv) > 1:
     folder_name = sys.argv[1]
 print("Result folder name:", folder_name)
 
 # Get the number threshold (optional, default is 0.7)
-score_threshold = 0.7  # If score is greater than this, the sample is bad and should be deleted
+# score_threshold = 0.7  # If score is greater than this, the sample is bad and should be deleted
 if len(sys.argv) > 2:
     try:
         score_threshold = float(sys.argv[2])
     except ValueError:
         print("Invalid number threshold. Please provide a valid number.")
         sys.exit(1)
+score_threshold = float(score_threshold)
 print("Number threshold:", score_threshold)
 
 NUM_OF_FEATURES = 25088  # Number of features
@@ -98,8 +101,9 @@ for j, sample in enumerate(samples):
         hbos[j] += log(1.0 / get_bar_height(histograms[i], p)).real
 
 # Find outlier samples based on the score threshold
+threshold = np.percentile(hbos, score_threshold * 100)
 for i, score in enumerate(hbos):
-    if score > np.percentile(hbos, score_threshold * 100):
+    if score > threshold:
         outlier_indexes.append(i)
 
 # Copy the outlier images to the result folder

@@ -1,3 +1,5 @@
+print("Running DetectionTestFeatures")
+
 from ultralytics import YOLO
 from PIL import Image
 from keras.preprocessing import image
@@ -16,7 +18,7 @@ model = VGG16(weights='imagenet', include_top=False)
 # Iterate over each file in the folder
 for file_path in file_list:
     if os.path.isfile(file_path):
-        print("File:", file_path)
+        print("File To Find Features:", file_path)
         img_path = file_path
         img = image.load_img(img_path, target_size=(224, 224))
         img_data = image.img_to_array(img)
@@ -36,7 +38,7 @@ for file_path in file_list:
             # Write each feature in a new row
             for feature in vgg16_feature.flatten():
                 writer.writerow([feature])
-        print("New File:",csv_path)
+        print("New Features Saved to File:",csv_path)
 
 # Print the features
 # print("VGG16 features:")

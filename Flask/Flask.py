@@ -2,8 +2,19 @@ from flask import Flask, render_template, jsonify, request, send_file
 from glob import glob
 from io import BytesIO
 from zipfile import ZipFile
-import subprocess, os, shutil, config
+import os, sys, config
+import subprocess, shutil, config
 
+# subprocess.run(["python", config.PATH_DETECT_SCRIPT, config.PATH_USABLE_MODELS+model, config.UPLOADED_FILES_PATH])
+
+# subprocess.run([config.PYTHON, config.PATH_CROP_SCRIPT, config.PATH_USABLE_MODELS+model])
+# subprocess.run([config.PYTHON, config.PATH_FEATURE_SCRIPT])
+# subprocess.run([config.PYTHON, config.PATH_OUTLINE_SCRIPT, config.PATH_TO_RESULTS, threshold])
+
+scriptDetect = open(config.PATH_DETECT_SCRIPT, mode="r", encoding="utf-8").read()
+scriptCrop = open(config.PATH_CROP_SCRIPT, mode="r", encoding="utf-8").read()
+scriptFeature = open(config.PATH_FEATURE_SCRIPT, mode="r", encoding="utf-8").read()
+scriptOutline = open(config.PATH_OUTLINE_SCRIPT, mode="r", encoding="utf-8").read()
 app = Flask("AppServices")
 
 def cleanup_files():
@@ -41,6 +52,7 @@ def index():
 
 @app.route("/detect", methods=['POST'])
 def detect():
+    print("flask detect")
     cleanup_files()
     model = request.form['model']
     uploaded_file = request.files['file']
@@ -53,7 +65,8 @@ def detect():
         uploaded_file.save(file_path)
 
         # Call your Python script with the file path as an argument
-        subprocess.run(["python", config.PATH_DETECT_SCRIPT, config.PATH_USABLE_MODELS+model, file_path])
+        # subprocess.run(["python", config.PATH_DETECT_SCRIPT, config.PATH_USABLE_MODELS+model, file_path])
+        exec(scriptDetect, {"model": config.PATH_USABLE_MODELS+model,"folder": file_path})
 
         # Send the result file as a downloadable response
         response = send_file(result_path, as_attachment=True)
@@ -67,6 +80,7 @@ def detect():
 
 @app.route("/detectMulti", methods=['POST'])
 def detectMulti():
+    print("flask detect Multiple")
     cleanup_files()
     model = request.form['model']
     uploaded_files = request.files.getlist('files')
@@ -76,7 +90,8 @@ def detectMulti():
                 file_path = os.path.join(config.UPLOADED_FILES_PATH, uploaded_file.filename)
                 uploaded_file.save(file_path)
         
-        subprocess.run(["python", config.PATH_DETECT_SCRIPT, config.PATH_USABLE_MODELS+model, config.UPLOADED_FILES_PATH])
+        # subprocess.run(["python", config.PATH_DETECT_SCRIPT, config.PATH_USABLE_MODELS+model, config.UPLOADED_FILES_PATH])
+        exec(scriptDetect, {"model": config.PATH_USABLE_MODELS+model,"folder": config.UPLOADED_FILES_PATH})
 
         for uploaded_file in uploaded_files:
             if uploaded_file.filename:
@@ -100,6 +115,7 @@ def detectMulti():
 
 @app.route("/detectFaceOutliners", methods=['POST'])
 def detectFaceOutliners():
+    print("flask detect multiple, cropp and outline")
     cleanup_files()
     model = request.form['model']
     threshold = request.form['threshold']
@@ -111,9 +127,13 @@ def detectFaceOutliners():
                 file_path = os.path.join(config.UPLOADED_FILES_PATH, uploaded_file.filename)
                 uploaded_file.save(file_path)
         
-        subprocess.run([config.PYTHON, config.PATH_CROP_SCRIPT, config.PATH_USABLE_MODELS+model])
-        subprocess.run([config.PYTHON, config.PATH_FEATURE_SCRIPT])
-        subprocess.run([config.PYTHON, config.PATH_OUTLINE_SCRIPT, config.PATH_TO_RESULTS, threshold])
+        # subprocess.run([config.PYTHON, config.PATH_CROP_SCRIPT, config.PATH_USABLE_MODELS+model])
+        # subprocess.run([config.PYTHON, config.PATH_FEATURE_SCRIPT])
+        # subprocess.run([config.PYTHON, config.PATH_OUTLINE_SCRIPT, config.PATH_TO_RESULTS, threshold])
+
+        exec(scriptCrop, {"model": config.PATH_USABLE_MODELS+model})
+        exec(scriptFeature)
+        exec(scriptOutline, {"folder_name": config.PATH_TO_RESULTS, "score_threshold": threshold})
 
         #clear upload
         for uploaded_file in uploaded_files:
