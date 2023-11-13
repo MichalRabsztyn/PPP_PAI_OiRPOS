@@ -9,7 +9,7 @@ runs/detect/predict/*
 !cropped/csv/.gitkeep
 !results/.gitkeep
 !uploads/.gitkeep
-!runs/detect/predict/.gitkeep
+!runs/detect/.gitkeep
 
 ## END CUSTOM
 
