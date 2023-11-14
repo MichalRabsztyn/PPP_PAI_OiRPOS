@@ -2,21 +2,66 @@ from flask import Flask, render_template, jsonify, request, send_file
 from glob import glob
 from io import BytesIO
 from zipfile import ZipFile
-import os, sys, config
-import subprocess, shutil, config
+import os, config, sys, re
+import shutil, config #,subprocess
+import uuid
 
-# subprocess.run(["python", config.PATH_DETECT_SCRIPT, config.PATH_USABLE_MODELS+model, config.UPLOADED_FILES_PATH])
-
-# subprocess.run([config.PYTHON, config.PATH_CROP_SCRIPT, config.PATH_USABLE_MODELS+model])
-# subprocess.run([config.PYTHON, config.PATH_FEATURE_SCRIPT])
-# subprocess.run([config.PYTHON, config.PATH_OUTLINE_SCRIPT, config.PATH_TO_RESULTS, threshold])
-
+app = Flask("AppServices")
 scriptDetect = open(config.PATH_DETECT_SCRIPT, mode="r", encoding="utf-8").read()
 scriptCrop = open(config.PATH_CROP_SCRIPT, mode="r", encoding="utf-8").read()
 scriptFeature = open(config.PATH_FEATURE_SCRIPT, mode="r", encoding="utf-8").read()
 scriptOutline = open(config.PATH_OUTLINE_SCRIPT, mode="r", encoding="utf-8").read()
-app = Flask("AppServices")
+clientActiveList = list()
+clientInactiveList = list()
 
+def newClient():
+    while True:
+        clientID = str(uuid.uuid4())
+        if clientID not in clientActiveList and clientID not in clientInactiveList:
+            clientActiveList.append(clientID)
+            print("$ New Client:",clientID)
+            break
+    
+    folderPath = os.path.join(clientID)
+    if not os.path.exists(folderPath):
+        os.mkdir(folderPath)
+        os.mkdir(os.path.join(folderPath, config.FOLDER_UPLOAD))
+        os.mkdir(os.path.join(folderPath, config.FOLDER_CROPPED))
+        os.mkdir(os.path.join(folderPath, config.FOLDER_CSV))
+        os.mkdir(os.path.join(folderPath, config.FOLDER_RESULTS))
+        os.makedirs(os.path.join(folderPath, config.FOLDER_YOLO_PROJECT))
+
+    return clientID
+
+def cleanInactiveClients():
+    print("$ Cleaning inactive clients")
+    for client in clientInactiveList:
+        if os.path.exists(client):
+            shutil.rmtree(client)
+            print("$ Cleaned inactive client:", client)
+
+    clientInactiveList.clear()
+
+def DeactiveClient(ClientID):
+    print("$ Deactivate client:", ClientID)
+    clientInactiveList.append(ClientID)
+
+def get_uuid_folders(root_path):
+    uuid_folders = []
+    folder_names = os.listdir(root_path)
+
+    # Regular expression to match UUID format
+    uuid_pattern = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$', re.IGNORECASE)
+
+    # Filter folders by matching the UUID pattern
+    for folder_name in folder_names:
+        folder_path = os.path.join(root_path, folder_name)
+        if os.path.isdir(folder_path) and uuid_pattern.match(folder_name):
+            uuid_folders.append(folder_path)
+
+    return uuid_folders
+
+# DO NOT USE IT
 def cleanup_files():
     if os.path.exists(config.RESULT_FOLDER_PATH):
         shutil.rmtree(config.RESULT_FOLDER_PATH)
@@ -52,58 +97,73 @@ def index():
 
 @app.route("/detect", methods=['POST'])
 def detect():
-    print("flask detect")
-    cleanup_files()
+    print("$ Flask detect")
+
+    Client = newClient()
+    cleanInactiveClients()
+
     model = request.form['model']
     uploaded_file = request.files['file']
-    filename = uploaded_file.filename
 
+    filename = uploaded_file.filename
     if filename != '':
         # Save the uploaded file to a temporary directory
-        file_path = os.path.join(config.UPLOADED_FILES_PATH, filename)
-        result_path = os.path.join(config.RESULT_FILE_PATH, filename)
-        uploaded_file.save(file_path)
+        uploadFilePath = os.path.join(Client, config.FOLDER_UPLOAD, filename)
+        resultPathFile = os.path.join(Client, config.FOLDER_YOLO_PROJECT, config.FOLDER_YOLO_NAME, filename)
+
+        uploaded_file.save(uploadFilePath)
 
         # Call your Python script with the file path as an argument
         # subprocess.run(["python", config.PATH_DETECT_SCRIPT, config.PATH_USABLE_MODELS+model, file_path])
-        exec(scriptDetect, {"model": config.PATH_USABLE_MODELS+model,"folder": file_path})
+        exec(scriptDetect, {
+            "model": config.PATH_USABLE_MODELS+model,
+            "folder": uploadFilePath,
+            "resultsFolder": os.path.join(Client, config.FOLDER_YOLO_PROJECT),
+            "resultsName": config.FOLDER_YOLO_NAME,
+        })
 
         # Send the result file as a downloadable response
-        response = send_file(result_path, as_attachment=True)
+        response = send_file(resultPathFile, as_attachment=True)
 
-        # Delete the uploaded and result files
-        os.remove(file_path)
-
+        DeactiveClient(Client)
         return response
 
     return jsonify({"error": "No file uploaded"})
 
 @app.route("/detectMulti", methods=['POST'])
 def detectMulti():
-    print("flask detect Multiple")
-    cleanup_files()
+    print("$ Flask detect Multiple")
+    Client = newClient()
+    cleanInactiveClients()
     model = request.form['model']
     uploaded_files = request.files.getlist('files')
+
     if uploaded_files:
         for uploaded_file in uploaded_files:
             if uploaded_file.filename:
-                file_path = os.path.join(config.UPLOADED_FILES_PATH, uploaded_file.filename)
+                file_path = os.path.join(Client, config.FOLDER_UPLOAD, uploaded_file.filename)
                 uploaded_file.save(file_path)
         
-        # subprocess.run(["python", config.PATH_DETECT_SCRIPT, config.PATH_USABLE_MODELS+model, config.UPLOADED_FILES_PATH])
-        exec(scriptDetect, {"model": config.PATH_USABLE_MODELS+model,"folder": config.UPLOADED_FILES_PATH})
+        exec(scriptDetect, {
+            "model": config.PATH_USABLE_MODELS+model,
+            "folder": os.path.join(Client, config.FOLDER_UPLOAD),
+            "resultsFolder": os.path.join(Client, config.FOLDER_YOLO_PROJECT),
+            "resultsName": config.FOLDER_YOLO_NAME,
+        })
 
-        for uploaded_file in uploaded_files:
-            if uploaded_file.filename:
-                file_path = os.path.join(config.UPLOADED_FILES_PATH, uploaded_file.filename)
-                os.remove(file_path)
+        # for uploaded_file in uploaded_files:
+        #     if uploaded_file.filename:
+        #         file_path = os.path.join(Client, config.FOLDER_YOLO_PROJECT, config.FOLDER_YOLO_NAME, uploaded_file.filename)
+        #         os.remove(file_path)
         
-        target = config.RESULT_FOLDER_PATH
+        target = os.path.join(Client, config.FOLDER_YOLO_PROJECT, config.FOLDER_YOLO_NAME)
         stream = BytesIO()
         with ZipFile(stream, 'w') as zf:
             for file in glob(os.path.join(target, '*.png')):
                 zf.write(file, os.path.basename(file))
         stream.seek(0)
+
+        DeactiveClient(Client)
 
         return send_file(
             stream,
@@ -116,32 +176,47 @@ def detectMulti():
 @app.route("/detectFaceOutliners", methods=['POST'])
 def detectFaceOutliners():
     print("flask detect multiple, cropp and outline")
-    cleanup_files()
+    Client = newClient()
+    cleanInactiveClients()
     model = request.form['model']
     threshold = request.form['threshold']
-    # print(threshold)
     uploaded_files = request.files.getlist('files')
+    uploadFilesPath = os.path.join(Client, config.FOLDER_UPLOAD)
+    croppedFilesPath = os.path.join(Client, config.FOLDER_CROPPED)
+    croppedCsvFilesPath = os.path.join(Client, config.FOLDER_CSV)
+    resultFilesPath = os.path.join(Client, config.FOLDER_RESULTS)
+
+
     if uploaded_files:
         for uploaded_file in uploaded_files:
             if uploaded_file.filename:
-                file_path = os.path.join(config.UPLOADED_FILES_PATH, uploaded_file.filename)
+                file_path = os.path.join(uploadFilesPath, uploaded_file.filename)
                 uploaded_file.save(file_path)
+                print("new file:", file_path)
         
         # subprocess.run([config.PYTHON, config.PATH_CROP_SCRIPT, config.PATH_USABLE_MODELS+model])
         # subprocess.run([config.PYTHON, config.PATH_FEATURE_SCRIPT])
         # subprocess.run([config.PYTHON, config.PATH_OUTLINE_SCRIPT, config.PATH_TO_RESULTS, threshold])
 
-        exec(scriptCrop, {"model": config.PATH_USABLE_MODELS+model})
-        exec(scriptFeature)
-        exec(scriptOutline, {"folder_name": config.PATH_TO_RESULTS, "score_threshold": threshold})
+        exec(scriptCrop, {
+            "model": config.PATH_USABLE_MODELS+model,
+            "folder": uploadFilesPath,
+            "resultFolder": croppedFilesPath,
+            "resultsFolder": os.path.join(Client, config.FOLDER_YOLO_PROJECT),
+            "resultsName": config.FOLDER_YOLO_NAME,
 
-        #clear upload
-        for uploaded_file in uploaded_files:
-            if uploaded_file.filename:
-                file_path = os.path.join(config.UPLOADED_FILES_PATH, uploaded_file.filename)
-                os.remove(file_path)
+        })
+        exec(scriptFeature, {
+            "folder_path": croppedFilesPath,
+            "csv_file_path": croppedCsvFilesPath,
+        })
+        exec(scriptOutline, {
+            "folder_data": croppedFilesPath,
+            "folder_result": resultFilesPath,
+            "score_threshold": threshold,
+        })
         
-        target = config.PATH_TO_RESULTS
+        target = resultFilesPath
         stream = BytesIO()
         with ZipFile(stream, 'w') as zf:
             for file in glob(os.path.join(target, '*.png')):
@@ -149,6 +224,8 @@ def detectFaceOutliners():
             for file in glob(os.path.join(target, '*.txt')):
                 zf.write(file, os.path.basename(file))
         stream.seek(0)
+
+        DeactiveClient(Client)
 
         return send_file(
             stream,
@@ -158,6 +235,8 @@ def detectFaceOutliners():
     
     return jsonify({"error": "No file uploaded"})
 
+clientInactiveList = get_uuid_folders("./")
+cleanInactiveClients()
 app.config.from_object(__name__)
 app.run(debug = True, port = 8000)
 

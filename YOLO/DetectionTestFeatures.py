@@ -5,10 +5,16 @@ from PIL import Image
 from keras.preprocessing import image
 from keras.applications.vgg16 import VGG16
 from keras.applications.vgg16 import preprocess_input
-import glob, os, sys, config, csv, numpy as np
+import glob, os, sys, csv, numpy as np
 
-folder_path = config.PATH_TO_SAVE_CROPPED_IMAGES_DOT
-csv_file_path = config.PATH_TO_CSV_FILES
+if len(sys.argv) < 3:
+    print("Usage: python your_script.py path_to_data path_to_data path_to_results")
+else:
+    folder_path = sys.argv[1]
+    csv_file_path = sys.argv[2]
+
+print(f"The folder_path you provided is: {folder_path}")
+print(f"The csv_file_path you provided is: {csv_file_path}")
 
 # Use glob to get a list of files in the folder (you can specify file extensions)
 file_list = glob.glob(os.path.join(folder_path,"*"))

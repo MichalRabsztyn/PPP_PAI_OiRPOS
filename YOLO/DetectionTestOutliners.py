@@ -1,9 +1,16 @@
 print("Running DetectionTestOutliners")
 
-import sys,os,csv,shutil, config
+import sys,os,csv,shutil
 import numpy as np
 import matplotlib.pyplot as plt
 from cmath import log
+
+if len(sys.argv) < 4:
+    print("Usage: python your_script.py TODO")
+else:
+    folder_data = sys.argv[1]
+    folder_result = sys.argv[2]
+    score_threshold = float(sys.argv[3])
 
 # Get the path to the folder
 # if len(sys.argv) > 1:
@@ -12,23 +19,24 @@ from cmath import log
 # else:
 #     print("No folder path provided. Please provide the path to the folder with data and csv folder with scv files.")
 #     sys.exit(1)
-folder_path = config.PATH_TO_SAVE_CROPPED_IMAGES_DOT
-print("Folder path:", folder_path)
+# folder_path = "./cropped"
+print("Folder path:", folder_data)
 
 # Get the result folder name (optional, default is "results")
 # folder_name = "results"  # Specify the folder name you want to create
-if len(sys.argv) > 1:
-    folder_name = sys.argv[1]
-print("Result folder name:", folder_name)
+# if len(sys.argv) > 1:
+#     folder_name = sys.argv[1]
+print("Result folder name:", folder_result)
 
 # Get the number threshold (optional, default is 0.7)
 # score_threshold = 0.7  # If score is greater than this, the sample is bad and should be deleted
-if len(sys.argv) > 2:
-    try:
-        score_threshold = float(sys.argv[2])
-    except ValueError:
-        print("Invalid number threshold. Please provide a valid number.")
-        sys.exit(1)
+# if len(sys.argv) > 2:
+#     try:
+#         score_threshold = float(sys.argv[2])
+#     except ValueError:
+#         print("Invalid number threshold. Please provide a valid number.")
+#         sys.exit(1)
+
 score_threshold = float(score_threshold)
 print("Number threshold:", score_threshold)
 
@@ -46,7 +54,7 @@ for i in range(NUM_OF_FEATURES):
     histogramsData.append([])
 
 # Iterate over each file in the folder
-for filename in os.listdir(folder_path):
+for filename in os.listdir(folder_data):
     if filename.endswith(".png"):
         # Extract the frame number, face part, and face number from the image filename
         # frame = filename.split(".png")[0]
@@ -59,13 +67,13 @@ for filename in os.listdir(folder_path):
         filenamesForSamples.append((filename, csv_filename))
 
 # Iterate over each file in the folder/csv
-for filename in os.listdir(os.path.join(folder_path, "csv")):
+for filename in os.listdir(os.path.join(folder_data, "csv")):
     if filename.endswith(".csv"):
         # Reserve space for one sample
         samples.append([])
 
         # For each row in the CSV file, insert the value to the respective histogram and sample
-        file_path = os.path.join(folder_path, "csv", filename)
+        file_path = os.path.join(folder_data, "csv", filename)
         with open(file_path, 'r') as csvfile:
             reader = csv.reader(csvfile)
             for i, row in enumerate(reader):
@@ -113,13 +121,13 @@ for i, score in enumerate(hbos):
 # Copy the outlier images to the result folder
 for index in outlier_indexes:
     # Check if the folder already exists
-    if not os.path.exists(folder_name):
-        os.mkdir(folder_name)
-        print("Folder created:", folder_name)
+    if not os.path.exists(folder_result):
+        os.mkdir(folder_result)
+        print("Folder created:", folder_result)
 
     # copy file
-    file_path = os.path.join(folder_path, filenamesForSamples[index][0])
-    shutil.copy(file_path, folder_name)
+    file_path = os.path.join(folder_data, filenamesForSamples[index][0])
+    shutil.copy(file_path, folder_result)
 
     # Check if the file exists
     # if os.path.exists(file_path):
@@ -128,6 +136,6 @@ for index in outlier_indexes:
     # else:
     #     print("File does not exist:", file_path)
 
-with open(folder_name+'/results.txt', 'a+') as file:
+with open(folder_result+'/results.txt', 'a+') as file:
     for index in outlier_indexes:
         file.write(str(hbos[index]/max(hbos)) + " " + filenamesForSamples[index][0] + '\n')

@@ -5,11 +5,10 @@ cropped/csv/*
 results/*
 uploads/*
 runs/detect/predict/*
-!cropped/.gitkeep
-!cropped/csv/.gitkeep
-!results/.gitkeep
-!uploads/.gitkeep
-!runs/detect/.gitkeep
+*
+!./Flask.py
+!./config.py
+!./templates
 
 ## END CUSTOM
 

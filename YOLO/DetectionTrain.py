@@ -9,7 +9,8 @@ if len(sys.argv) < 2:
 else:
     # Get a model path
     argument = sys.argv[1]
-    print(f"The argument you provided is: {argument}")
+
+print(f"The argument you provided is: {argument}")
 
 # Load a mode
 model = YOLO(argument)  # load a pretrained model (recommended for training)
