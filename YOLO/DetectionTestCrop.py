@@ -4,19 +4,21 @@ from ultralytics import YOLO
 from PIL import Image
 import os, sys
 
-if len(sys.argv) < 4:
+if len(sys.argv) < 6:
     print("Usage: python your_script.py path_to_model path_to_data path_to_results")
 else:
     model = sys.argv[1]
     folder = sys.argv[2]
     resultFolder = sys.argv[3]
+    resultsFolder = sys.argv[4]
+    resultsName = sys.argv[5]
 
 print(f"The model you provided is: {model}")
 print(f"The folder you provided is: {folder}")
 print(f"The resultFolder you provided is: {resultFolder}")
 
 model = YOLO(model)
-results = model(folder, imgsz=640, save=False)
+results = model(folder, imgsz=640, save=False, project=resultsFolder, name=resultsName)
 
 for pred in results:
     input_image = Image.open(pred.path)
