@@ -1,28 +1,17 @@
 ## CUSTOM
 
-YOLO/test/
-YOLO/train/
-YOLO/valid/
+YOLO
+Flask
 
-YOLO/uploads/*
-YOLO/runs/*
-YOLO/cropped/*
-YOLO/results/*
-
-YOLO/*.yaml
-YOLO/yolo*.pt
-YOLO/usable_models/*
 !YOLO/usable_models/.gitkeep
 !YOLO/usable_models/anime_face_small.pt
 
-./YOLO
 !YOLO/DetectionTest.py
 !YOLO/DetectionTestCrop.py
 !YOLO/DetectionTestFeatures.py
 !YOLO/DetectionTestOutliners.py
 !YOLO/DetectionTrain.py
 !YOLO/usable_models
-
 
 LICENSE
 LICENSE.txt
