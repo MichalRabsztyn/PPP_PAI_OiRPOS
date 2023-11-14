@@ -16,6 +16,19 @@ Flask
 LICENSE
 LICENSE.txt
 
+YOLO/test/
+YOLO/train/
+YOLO/valid/
+
+YOLO/uploads/*
+YOLO/runs/*
+YOLO/cropped/*
+YOLO/results/*
+
+YOLO/*.yaml
+YOLO/yolo*.pt
+YOLO/usable_models/*
+
 ## CUSTOM END
 
 #                                     ASP.NET
