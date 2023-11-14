@@ -3,7 +3,7 @@ from glob import glob
 from io import BytesIO
 from zipfile import ZipFile
 import os, config, sys, re
-import shutil, config #,subprocess
+import shutil, config # ,subprocess
 import uuid
 
 app = Flask("AppServices")
@@ -60,36 +60,6 @@ def get_uuid_folders(root_path):
             uuid_folders.append(folder_path)
 
     return uuid_folders
-
-# DO NOT USE IT
-def cleanup_files():
-    if os.path.exists(config.RESULT_FOLDER_PATH):
-        shutil.rmtree(config.RESULT_FOLDER_PATH)
-
-    # Clear contents of PATH_TO_SAVE_CROPPED_IMAGES except csv folder and .gitkeep file
-    save_cropped_images_path = config.PATH_TO_SAVE_CROPPED_IMAGES
-    for item in os.listdir(save_cropped_images_path):
-        item_path = os.path.join(save_cropped_images_path, item)
-        if os.path.isfile(item_path) and item != '.gitkeep':
-            os.remove(item_path)
-        elif os.path.isdir(item_path) and item != 'csv':
-            shutil.rmtree(item_path)
-
-    # Clear contents of PATH_TO_CSV_FILES
-    csv_files_path = config.PATH_TO_CSV_FILES
-    for csv_file in os.listdir(csv_files_path):
-        csv_file_path = os.path.join(csv_files_path, csv_file)
-        if os.path.isfile(csv_file_path) and item != '.gitkeep':
-            os.remove(csv_file_path)
-
-    # Clear contents of PATH_TO_RESULTS
-    results_path = config.PATH_TO_RESULTS
-    for result_item in os.listdir(results_path):
-        result_item_path = os.path.join(results_path, result_item)
-        if os.path.isfile(result_item_path) and item != '.gitkeep':
-            os.remove(result_item_path)
-        elif os.path.isdir(result_item_path):
-            shutil.rmtree(result_item_path)
 
 @app.route("/")
 def index():
@@ -239,6 +209,36 @@ clientInactiveList = get_uuid_folders("./")
 cleanInactiveClients()
 app.config.from_object(__name__)
 app.run(debug = True, port = 8000)
+
+# DO NOT USE IT
+# def cleanup_files():
+#     if os.path.exists(config.RESULT_FOLDER_PATH):
+#         shutil.rmtree(config.RESULT_FOLDER_PATH)
+
+#     # Clear contents of PATH_TO_SAVE_CROPPED_IMAGES except csv folder and .gitkeep file
+#     save_cropped_images_path = config.PATH_TO_SAVE_CROPPED_IMAGES
+#     for item in os.listdir(save_cropped_images_path):
+#         item_path = os.path.join(save_cropped_images_path, item)
+#         if os.path.isfile(item_path) and item != '.gitkeep':
+#             os.remove(item_path)
+#         elif os.path.isdir(item_path) and item != 'csv':
+#             shutil.rmtree(item_path)
+
+#     # Clear contents of PATH_TO_CSV_FILES
+#     csv_files_path = config.PATH_TO_CSV_FILES
+#     for csv_file in os.listdir(csv_files_path):
+#         csv_file_path = os.path.join(csv_files_path, csv_file)
+#         if os.path.isfile(csv_file_path) and item != '.gitkeep':
+#             os.remove(csv_file_path)
+
+#     # Clear contents of PATH_TO_RESULTS
+#     results_path = config.PATH_TO_RESULTS
+#     for result_item in os.listdir(results_path):
+#         result_item_path = os.path.join(results_path, result_item)
+#         if os.path.isfile(result_item_path) and item != '.gitkeep':
+#             os.remove(result_item_path)
+#         elif os.path.isdir(result_item_path):
+#             shutil.rmtree(result_item_path)
 
 # @app.route("/login")
 # def login():
