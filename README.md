@@ -11,8 +11,8 @@ Projekt aplikacji internetowej działającej na aplikacji na ASP.Net łączącej
 1. Zainstaluj wymagania ``` pip install -r requirements.txt  ```
 1. Uruchom aplikacje flask ``` python3 ./Flask/flask.py ```
 1. Uruchom aplikacje ASP.NET:
-	2. WINDOWS: ``` ASPNET/PPP_PAI_OiRPOS.exe ```
-	2. LINUX: 
+   2. WINDOWS: ``` ASPNET/PPP_PAI_OiRPOS.exe ```
+   2. LINUX: 
 	```
 		chmod 777 PPP_PAI_OiRPOS
 		./PPP_PAI_OiRPOS
