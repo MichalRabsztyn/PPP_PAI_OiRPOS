@@ -1,17 +1,4 @@
-## CUSTOM
-
-cropped/*
-cropped/csv/*
-results/*
-uploads/*
-runs/detect/predict/*
-*
-!./Flask.py
-!./config.py
-!./templates
-
-## END CUSTOM
-
+## python
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
