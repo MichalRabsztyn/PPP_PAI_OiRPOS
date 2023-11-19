@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile-flask
+    stop_signal: SIGINT
+    ports:
+      - "8000:8000"
+
+  aspnet:
+    build:
+      context: .
+      dockerfile: Dockerfile-aspnet
+    ports:
+      - "80:80"

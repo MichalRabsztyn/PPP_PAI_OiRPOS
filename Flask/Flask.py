@@ -208,7 +208,7 @@ def detectFaceOutliners():
 clientInactiveList = get_uuid_folders("./")
 cleanInactiveClients()
 app.config.from_object(__name__)
-app.run(debug = True, port = 8000)
+app.run(host='0.0.0.0', debug = True, port = 8000)
 
 # DO NOT USE IT
 # def cleanup_files():

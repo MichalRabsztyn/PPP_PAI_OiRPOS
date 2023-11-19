@@ -40,7 +40,7 @@ namespace PPP_PAI_OiRPOS.Pages
                 using (var client = new HttpClient())
                 {
                     // Define the base URL of the server on another port
-                    client.BaseAddress = new Uri("http://localhost:8000");
+                    client.BaseAddress = new Uri("http://127.0.0.1:8000");
 
                     // Create a FormDataContent to send the file and model as form data
                     var form = new MultipartFormDataContent();

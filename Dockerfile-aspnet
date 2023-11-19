@@ -1,0 +1,16 @@
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
+
+WORKDIR /app
+
+# Copy ASP.NET files and folders
+COPY ./ASPNET/ .
+
+EXPOSE 5000
+EXPOSE 8000
+EXPOSE 80
+
+ENTRYPOINT ["dotnet", "PPP_PAI_OiRPOS.dll"]
+
+# RUN ./PPP_PAI_OiRPOS.exe
+
+# CMD ["dotnet", "PPP_PAI_OiRPOS"]

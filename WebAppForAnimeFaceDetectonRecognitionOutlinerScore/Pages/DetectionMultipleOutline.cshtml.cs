@@ -49,7 +49,7 @@ namespace PPP_PAI_OiRPOS.Pages
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:8000");
+                client.BaseAddress = new Uri("http://127.0.0.1:8000");
                 var form = new MultipartFormDataContent();
                 form.Add(new StringContent(model), "model");
                 form.Add(new StringContent(threshold.ToString().Replace(',', '.')), "threshold");

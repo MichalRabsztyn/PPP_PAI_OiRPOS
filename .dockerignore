@@ -1,0 +1,16 @@
+ASPNETLinux/**
+samples_for_tests/**
+WebAppForAnimeFaceDetectonRecognitionOutlinerScore/**
+YOLO/__pycache__/**
+YOLO/cropped/**
+YOLO/runs/**
+YOLO/test/**
+YOLO/train/**
+YOLO/uploads/**
+YOLO/valid/**
+YOLO/data.yaml
+YOLO/yolov8n.pt
+YOLO/yolov8x.pt
+Flask/__pycache__/**
+
+

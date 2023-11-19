@@ -1,0 +1,22 @@
+FROM python:3
+
+WORKDIR /app
+
+# Copy Flask files and folders
+COPY ./Flask/ ./Flask/
+
+# Copy YOLO files and folders
+COPY ./YOLO/ ./YOLO/
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install flask
+
+EXPOSE 8000
+EXPOSE 5000
+EXPOSE 80
+
+WORKDIR /app/Flask
+
+ENTRYPOINT [ "python" ]
+CMD ["./Flask.py"]
