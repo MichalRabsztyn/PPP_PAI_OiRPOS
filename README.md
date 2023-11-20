@@ -20,10 +20,4 @@ Projekt aplikacji internetowej działającej na aplikacji na ASP.Net łączącej
 1. W przeglądarce internetowej przejść pod adress: ``` 127.0.0.1:5000 ```
 
 ## Jak działa?
-TODO
-Frontend - Bootstrap
-Aplikacja - C# ASP.Net
-Skrypty - Python
-Baza danych -
-Serwer Flask
-Serwer ASP.NET
+Są 2 serwery http, ASP.NET działający jako komunikator z użytkownikiem. Drugi Flask działający jako usługa dla pierwszego serwera aby udostępnić możliwośi skryptów działających na sieci YOLOv8 do wykrywania oraz Histogram Based Outliner Score dla wykrytych obrazów.
